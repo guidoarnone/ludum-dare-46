@@ -51,6 +51,29 @@ public static class Draw {
             Gizmos.DrawRay(position, normal * size);
         }
 
+        public static void grid(Rectangle rectangle, Int2 divisions) {
+            Vector3 position = rectangle.position;
+            Vector3 normal = rectangle.normal;
+            Vector3 forward = rectangle.forward;
+            Vector2 radius = rectangle.size/2;
+
+            Vector3[] vertices = rectangle.to_vertices();
+
+            Gizmos.DrawLine(vertices[0], vertices[1]);
+            Gizmos.DrawLine(vertices[1], vertices[2]);
+            Gizmos.DrawLine(vertices[2], vertices[3]);
+            Gizmos.DrawLine(vertices[3], vertices[0]);
+            for (int i = 1; i < divisions.x; i++) {
+                float t = (float)i / divisions.x;
+                Gizmos.DrawLine(Vector3.Lerp(vertices[0],vertices[3],t), Vector3.Lerp(vertices[1],vertices[2],t));
+            }
+            for (int i = 1; i < divisions.y; i++) {
+                float t = (float)i / divisions.y;
+                Gizmos.DrawLine(Vector3.Lerp(vertices[0], vertices[1], t), Vector3.Lerp(vertices[3], vertices[2], t));
+            }
+            Gizmos.DrawRay(position, normal * radius);
+        }
+
         public static void circle(Geometry.Circle circle, int sides) {
             Vector3 position = circle.position;
             Vector3 normal = circle.normal;
@@ -184,14 +207,12 @@ public static class Draw {
         public static void plane(Geometry.Plane plane) {
             Vector3 position = plane.position;
             Vector3 normal = plane.normal;
+            Vector3 forward = plane.forward;
             float size = plane.size;
 
             Vector3 V;
 
-            if (normal.normalized != Vector3.forward) {
-                V = Vector3.Cross(normal, Vector3.forward).normalized * normal.magnitude;
-            }
-            else { V = Vector3.Cross(normal, Vector3.up).normalized * normal.magnitude; }
+            V = Vector3.Cross(normal, forward).normalized * normal.magnitude;
 
             Vector3 A = position + V * size;
             Vector3 C = position - V * size;
@@ -213,9 +234,9 @@ public static class Draw {
         public static void rectangle (Rectangle rectangle) {
             Vector3 position = rectangle.position;
             Vector3 normal = rectangle.normal;
-            Vector3 up = rectangle.up;
-            float width = rectangle.width;
-            float height = rectangle.height;
+            Vector3 up = rectangle.normal;
+            float width = rectangle.size.x;
+            float height = rectangle.size.y;
 
             Vector3 right = Vector3.Cross(normal, up);
 

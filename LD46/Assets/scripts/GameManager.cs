@@ -23,7 +23,6 @@ public class GameManager : MonoBehaviour {
 
     void Update() {
       incomeManager.update();
-      Debug.Log(incomeManager.seeds);
     }
 
     void singleton() { instance = instance ?? this; }

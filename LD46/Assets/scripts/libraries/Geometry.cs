@@ -27,16 +27,24 @@ namespace Geometry {
     public struct Rectangle {
         public Vector3 position;
         public Vector3 normal;
-        public Vector3 up;
-        public float width;
-        public float height;
+        public Vector3 forward;
+        public Vector2 size;
 
-        public Rectangle(Vector3 position, Vector3 normal, Vector3 up, float width, float height) {
+        public Rectangle(Vector3 position, Vector3 normal, Vector3 forward, Vector2 size) {
             this.position = position;
             this.normal = normal;
-            this.up = up;
-            this.width = width;
-            this.height = height;
+            this.forward = forward;
+            this.size = size;
+        }
+
+        public Vector3[] to_vertices() {
+            Vector3[] vertices = new Vector3[4];
+            Vector3 right = Vector3.Cross(normal, forward);
+            vertices[0] = position + size.x * right + size.y * forward;
+            vertices[1] = position + size.x * right - size.y * forward;
+            vertices[2] = position - size.x * right - size.y * forward;
+            vertices[3] = position - size.x * right + size.y * forward;
+            return vertices;
         }
     }
 
@@ -96,14 +104,17 @@ namespace Geometry {
 	public struct Plane {
 		public Vector3 position;
 		public Vector3 normal;
-		public float size;
+        public Vector3 forward;
+        public float size;
 
-		public Plane (Vector3 position, Vector3 normal, float size) {
+		public Plane (Vector3 position, Vector3 normal, Vector3 forward, float size) {
 			this.position = position;
 			this.normal = normal;
-			this.size = size;
+            this.forward = forward;
+            this.size = size;
 		}
 
+        //TODO for library
         public Vector3[] to_vertices() {
             Vector3[] vertices = new Vector3[4];
             vertices[0] = position + size * Vector3.Cross(normal, Vector3.forward);
@@ -114,7 +125,7 @@ namespace Geometry {
         }
 	}
 
-	public struct Box {
+    public struct Box {
 		public Vector3 position;
 		public Vector3 size;
 		public Vector3 rotation;
