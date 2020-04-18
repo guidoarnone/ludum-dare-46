@@ -104,7 +104,7 @@ Material:
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _Power: 4
-    - _RimAmount: 0.716
+    - _RimAmount: 0.7
     - _RimSharp: 7
     - _RimStrength: 3
     - _RimThreshold: 0.1

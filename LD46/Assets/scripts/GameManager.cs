@@ -4,11 +4,19 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour {
 
-    private static IncomeManager incomeManager;
+    public static GameManager instance;
+
+    public WeaponManager weaponManager;
+    public static IncomeManager incomeManager;
+
+    private void OnDrawGizmos() {
+        Gizmos.color = Color.red;
+        Draw.Gizmo.sphere(new Geometry.Sphere(transform.position, 2.5f), 16);
+        Draw.Gizmo.marker(new Geometry.Sphere(transform.position, 10f));
+    }
 
     void Start() {
       incomeManager = new IncomeManager();
-      //debugging
       incomeManager.setSeedIncrement(5);
       incomeManager.setSeedInterval(1);
     }
@@ -17,4 +25,6 @@ public class GameManager : MonoBehaviour {
       incomeManager.update();
       Debug.Log(incomeManager.seeds);
     }
+
+    void singleton() { instance = instance ?? this; }
 }
