@@ -1,16 +1,29 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraManager : MonoBehaviour {
 
     private Camera camera;
-    public float maxCameraSize;
-    public float minCameraSize;
-    public float zoomSpeed;
+    [SerializeField]
+    private float maxCameraSize;
+    [SerializeField]
+    private float minCameraSize;
+    [SerializeField]
+    [Range(1, 10)]
+    private float zoomSpeed;
+    private Vector3 cameraCenter;
+    [SerializeField]
+    private float maxPanXDistance;
+    [SerializeField]
+    private float maxPanZDistance;
+    [SerializeField]
+    [Range(1, 10)]
+    private float panSpeed;
 
     void Start() {
       camera = gameObject.GetComponent<Camera>();
+      cameraCenter = camera.transform.position;
     }
 
     void Update() {
@@ -18,25 +31,25 @@ public class CameraManager : MonoBehaviour {
       if(Input.GetKeyDown(KeyCode.Space)) {
         center();
       }
-      pan(Input.GetAxis("Mouse X"));
+      pan(Input.GetAxis("Mouse X"),Input.GetAxis("Mouse Y"));
     }
 
     private void updateZoom(float scroll) {
-      float newCameraSize = camera.orthographicSize += scroll * Time.deltaTime * zoomSpeed;
-      if (newCameraSize > maxCameraSize) {
-        camera.orthographicSize = maxCameraSize;
-      } else if(newCameraSize < minCameraSize) {
-        camera.orthographicSize = minCameraSize;
-      } else {
-        camera.orthographicSize = newCameraSize;
-      }
+      float speed = (float)20 * zoomSpeed * zoomSpeed;
+      float newCameraSize = camera.orthographicSize -= scroll * Time.deltaTime * speed;
+      camera.orthographicSize = Mathf.Clamp(newCameraSize, minCameraSize, maxCameraSize);
     }
 
     private void center() {
 
     }
 
-    private void pan(float panvalue) {
+    private void pan(float mouseX, float mouseZ) {
+      float newPanX = camera.transform.position.x + (mouseX * Time.deltaTime * panSpeed);
+      float newPanZ = camera.transform.position.z + (mouseZ * Time.deltaTime * panSpeed * 5);
+      float rescalePanX = Mathf.Clamp(newPanX, cameraCenter.x-maxPanXDistance, cameraCenter.x+maxPanXDistance) - camera.transform.position.x;
+      float rescalePanZ = Mathf.Clamp(newPanZ, cameraCenter.z-maxPanZDistance, cameraCenter.z+maxPanZDistance) - camera.transform.position.z;
+      camera.transform.Translate(rescalePanX,0,rescalePanZ);
     }
 
 }
