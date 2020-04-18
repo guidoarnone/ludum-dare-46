@@ -38,7 +38,7 @@
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
 			float4 _Color;
-			float4 _AmbientColor;
+			uniform fixed4 unity_Ambient;
 			
 			float4 _SpecularColor;
 			float _Glossiness;
@@ -90,7 +90,7 @@
 				float4 specular = specularIntensitySmooth * _SpecularColor * lightIntensity * _LightColor0;
 				float4 rim = rimIntensity * _RimColor * _LightColor0;
 
-				return color * (_AmbientColor + light + specular + rim) * _Color;
+				return color * (unity_Ambient + light + specular + rim) * _Color;
 			}
 			ENDCG
 		}

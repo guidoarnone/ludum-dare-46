@@ -8,8 +8,8 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: M_bucket
-  m_Shader: {fileID: 4800000, guid: 60d70e22b8ca6d24fbd1c4b1683c9441, type: 3}
-  m_ShaderKeywords: 
+  m_Shader: {fileID: 4800000, guid: f522cf4f726d15447b2f0cfaf9b35251, type: 3}
+  m_ShaderKeywords: THINGY_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -108,6 +108,7 @@ Material:
     - _RimSharp: 7
     - _RimStrength: 1
     - _RimThreshold: 0.1
+    - _Rotate: 1
     - _SOffset: 0.5
     - _SSize: 0.9
     - _Scale: 0.5
