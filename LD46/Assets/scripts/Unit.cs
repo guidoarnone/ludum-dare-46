@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 using UnityEditor;
 
-public enum Emotion { Dead, Neutral, Angry, Joy}
+public enum Emotion {Neutral, Attack}
 
 public class Unit : MonoBehaviour {
 
     [SerializeField]
-    protected int battleValue;
+    public int battleValue;
 
     [SerializeField]
     protected GameObject weapon;
@@ -24,6 +24,7 @@ public class Unit : MonoBehaviour {
     void awake(Weapon weapon = Weapon.Melee) {
         faceMat = face.GetComponent<MeshRenderer>().material;
         weaponMat = this.weapon.GetComponent<MeshRenderer>().material;
+        changeEmotion(Emotion.Neutral);
         changeWeapon(weapon);
     }
 

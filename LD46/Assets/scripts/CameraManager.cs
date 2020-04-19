@@ -10,7 +10,7 @@ public class CameraManager : MonoBehaviour {
     [SerializeField]
     private float minCameraSize;
     [SerializeField]
-    [Range(1, 10)]
+    [Range(1, 1000)]
     private float zoomSpeed;
     private Vector3 cameraCenter;
     [SerializeField]
@@ -18,7 +18,7 @@ public class CameraManager : MonoBehaviour {
     [SerializeField]
     private float maxPanZDistance;
     [SerializeField]
-    [Range(1, 10)]
+    [Range(1, 1000)]
     private float panSpeed;
     [SerializeField]
     private int widthPanTolerance;
@@ -49,15 +49,16 @@ public class CameraManager : MonoBehaviour {
     }
 
     private void pan(Vector2 mouse) {
-      float newPanX = camera.transform.position.x + (mouse.x * Time.deltaTime * panSpeed);
-      float newPanZ = camera.transform.position.z + (mouse.y * Time.deltaTime * panSpeed);
-      float rescalePanX = Mathf.Clamp(newPanX, cameraCenter.x-maxPanXDistance, cameraCenter.x+maxPanXDistance);
-      float rescalePanZ = Mathf.Clamp(newPanZ, cameraCenter.z-maxPanZDistance, cameraCenter.z+maxPanZDistance);
-      camera.transform.position = new Vector3(rescalePanX,transform.position.y,rescalePanZ);
+        Vector3 new_position = camera.transform.position +
+            mouse.x * Time.deltaTime * panSpeed * camera.transform.right +
+            Vector3.Cross(camera.transform.right, Vector3.up) * mouse.y * Time.deltaTime * panSpeed;
+      float rescalePanX = Mathf.Clamp(new_position.x, cameraCenter.x-maxPanXDistance, cameraCenter.x+maxPanXDistance);
+      float rescalePanZ = Mathf.Clamp(new_position.z, cameraCenter.z-maxPanZDistance, cameraCenter.z+maxPanZDistance);
+        camera.transform.position = new Vector3(rescalePanX, camera.transform.position.y, rescalePanZ);
     }
 
     private Vector2 getMouseAxis() {
-      Vector2 mouseAxis  = new Vector2(Input.GetAxis("Mouse X"),Input.GetAxis("Mouse Y"));
+      Vector2 mouseAxis  = new Vector2(Input.GetAxis("Mouse X"),Input.GetAxis("Mouse Y")).normalized;
       if (Input.mousePosition.x >= Screen.width - widthPanTolerance) {
         mouseAxis.x = 1;
       } else if(Input.mousePosition.x <= widthPanTolerance) {

@@ -4,6 +4,9 @@
 		_MainTex("Main Texture", 2D) = "white" {}
 
 		[HDR]
+		_AmbientColor("Ambient Light", Color) = (0.5,0.5,0.5,1)
+
+		[HDR]
 		_SpecularColor("Specular Color", Color) = (0.9,0.9,0.9,1)
 		_Glossiness("Glossiness", Float) = 32
 
@@ -38,7 +41,7 @@
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
 			float4 _Color;
-			uniform fixed4 unity_Ambient;
+			float4 _AmbientColor;
 			
 			float4 _SpecularColor;
 			float _Glossiness;
@@ -90,7 +93,7 @@
 				float4 specular = specularIntensitySmooth * _SpecularColor * lightIntensity * _LightColor0;
 				float4 rim = rimIntensity * _RimColor * _LightColor0;
 
-				return color * (unity_Ambient + light + specular + rim) * _Color;
+				return color * (_AmbientColor + light + specular + rim) * _Color;
 			}
 			ENDCG
 		}

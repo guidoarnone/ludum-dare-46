@@ -3,6 +3,9 @@
 public enum Weapon { Melee, Ranged }
 
 public class WeaponManager : MonoBehaviour {
+
+    public float asd;
+
     public Texture2D[] weapons;
     public Texture2D[] rangedWapons;
 
