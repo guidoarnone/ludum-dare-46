@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 
-public enum Emotion {Neutral, Attack}
+public enum Emotion {Neutral, Attack, Hit, Joy, Dead}
 
 public class Unit : MonoBehaviour {
 

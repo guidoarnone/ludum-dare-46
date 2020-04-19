@@ -10,11 +10,9 @@ public class GameManager : MonoBehaviour {
 
     public static GameManager instance;
 
+    public CombatManager combatManager;
     public WeaponManager weaponManager;
-    public static IncomeManager incomeManager;
-
-    [SerializeField]
-    protected Army playerArmy;
+    public IncomeManager incomeManager;
 
     private void OnDrawGizmos() {
         Gizmos.color = Color.red;
@@ -23,22 +21,22 @@ public class GameManager : MonoBehaviour {
     }
 
     void Awake() {
+        singleton();
+
         incomeManager = new IncomeManager();
-        playerArmy.awake();
+        combatManager.awake();
 
+        update += combatManager.update;
         update += incomeManager.update;
-        incomeManager.battleIncome.income += playerArmy.add;
-
-        //DEBUG
-        //incomeManager.battleIncome.income += log;
     }
 
     void Update() {
         update();
+        if (Input.GetKeyDown(KeyCode.Space)) { combatManager.battle(); }
     }
 
-    public void log (int n) {
-        Debug.Log(n);
+    public void gameOver() {
+
     }
 
     void singleton() { instance = instance ?? this; }

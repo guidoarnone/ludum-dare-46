@@ -9,7 +9,7 @@ public class IncomeManager {
     public Income seedIncome { get; protected set; }
 
     public IncomeManager() {
-        battleIncome = new Income(1, 0.1f);
+        battleIncome = new Income(5, 0.1f);
         seedIncome = new Income(5, 1);
     }
 

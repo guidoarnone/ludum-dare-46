@@ -6,16 +6,23 @@ public class Squad : MonoBehaviour {
 
     public event ValueChange change = delegate { };
 
+    //TODO on 3D
+    public float front { get { Vector3Int? C = current; Debug.Log(position(current.Value).z); return C == null ? back : position(current.Value).z; } }
+
+    public float back { get { return position(0, 0, 0).z; } }
+
     public int battleValue { get; protected set; }
 
-    public int capacity { get { return squadSize.x * squadSize.y * squadSize.z; } }
-
-    public int number { get; protected set; }
+    public bool empty { get { return number == 0; } }
 
     public bool full { get { return number == capacity; } }
 
+    public int number { get; protected set; }
+
+    public int capacity { get { return squadSize.x * squadSize.y * squadSize.z; } }
+
     public Vector3Int? coordinate(int n) {
-        if (n < 0 || n > capacity) { return null; }
+        if (n < 0 || n >= capacity) { return null; }
         int x, y, z;
         x = n % squadSize.x;
         y = n / (squadSize.x * squadSize.z);
@@ -36,7 +43,6 @@ public class Squad : MonoBehaviour {
             if (units[x, y, z].isActiveAndEnabled) { delta = units[x, y, z].battleValue; number++; }
             else { delta = -units[x, y, z].battleValue; number--; }
             battleValue += delta;
-            Debug.Log(delta);
             change(delta);
         }
     }
@@ -45,10 +51,10 @@ public class Squad : MonoBehaviour {
     protected Unit unit;
 
     [SerializeField]
-    protected Squad nextSquad;
+    protected Squad previousSquad;
 
     [SerializeField]
-    protected Squad previousSquad;
+    protected Squad nextSquad;
 
     [SerializeField]
     protected Army army;
@@ -70,7 +76,7 @@ public class Squad : MonoBehaviour {
         for (int x = 0; x < squadSize.x; x++) {
             for (int y = 0; y < squadSize.y; y++) {
                 for (int z = 0; z < squadSize.z; z++) {
-                    units[x, y, z] = Instantiate(unit, position(x, y, z), Quaternion.identity, transform);
+                    units[x, y, z] = Instantiate(unit, position(x, y, z), transform.rotation, transform);
                     units[x, y, z].gameObject.SetActive(false);
                 }
             }
@@ -78,6 +84,27 @@ public class Squad : MonoBehaviour {
 
         number = 0;
         battleValue = 0;
+    }
+
+    public void reset() {
+        clear();
+        number = 0;
+        battleValue = 0;
+    }
+
+    public Vector3 position(Vector3Int V) {
+        return position(V.x, V.y, V.z);
+    }
+
+    public Vector3 position(int x, int y, int z) {
+        Int2 squadSizeGround = new Int2(squadSize.x, squadSize.z);
+        Vector2 size = (squadSizeGround * (unitRadius + unitBuffer / 2f));
+        Vector3 offset = new Vector3(-size.x + unitBuffer / 2f + unitRadius + x * (unitBuffer + unitRadius * 2), unitRadius + y * (unitBuffer + unitRadius * 2), -size.y + unitBuffer / 2f + unitRadius + z * (unitBuffer + unitRadius * 2));
+        return transform.TransformPoint(offset);
+    }
+
+    protected void place(int x, int y, int z) {
+        units[x, y, z].transform.position = position(x, y, z);
     }
 
     public void add(int n) {
@@ -88,28 +115,30 @@ public class Squad : MonoBehaviour {
             if (index!=null) {
                 this[index.Value.x, index.Value.y, index.Value.z] = true;
             }
-            if (number >= capacity && nextSquad && !nextSquad.full) { empty(); nextSquad.add(1); }
+            if (number >= capacity && nextSquad && !nextSquad.full) { clear(); nextSquad.add(1); }
         }
     }
 
-    protected void empty() {
+    public void remove(int n) {
+        if (nextSquad) { nextSquad.remove(n/capacity); }
+        n %= capacity;
+        if (n>number && nextSquad && !nextSquad.empty) { nextSquad.remove(1); add(capacity - n); return; }
+        for (int i = 0; i < n; i++) {
+            Vector3Int? index = current;
+            if (index != null) {
+                this[index.Value.x, index.Value.y, index.Value.z] = false;
+            }
+            else { break;  }
+        }
+    }
+
+    protected void clear() {
         int n = number;
         for (int i = 0; i < n; i++) { 
             Vector3Int? index = current;
             if (index == null) { return; }
             this[index.Value.x, index.Value.y, index.Value.z] = false;
         }
-    }
-
-    public Unit getUnit(int x, int y, int z) {
-        return units[x, y, z];
-    }
-
-    public Vector3 position(int x, int y, int z) {
-        Int2 squadSizeGround = new Int2(squadSize.x, squadSize.z);
-        Vector2 size = (squadSizeGround * (unitRadius + unitBuffer / 2f));
-        Vector3 offset = new Vector3(-size.x + unitBuffer / 2f + unitRadius + x * (unitBuffer + unitRadius * 2), unitRadius + y * (unitBuffer + unitRadius * 2), -size.y + unitBuffer / 2f + unitRadius + z * (unitBuffer + unitRadius * 2));
-        return transform.position + offset;
     }
 
     void OnDrawGizmos() {

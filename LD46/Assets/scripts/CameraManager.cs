@@ -4,72 +4,65 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour {
 
-    private Camera camera;
+    protected const float worldScale = 10f;
+
+    [Range(0, 1)]
     [SerializeField]
-    private float maxCameraSize;
+    protected float smoothing;
+
     [SerializeField]
-    private float minCameraSize;
+    protected Vector2 bounds;
     [SerializeField]
-    [Range(1, 1000)]
-    private float zoomSpeed;
-    private Vector3 cameraCenter;
+    protected Vector2 zoomBounds;
     [SerializeField]
-    private float maxPanXDistance;
+    [Range(1, 10)]
+    protected float zoomSpeed;
+
     [SerializeField]
-    private float maxPanZDistance;
+    [Range(1, 10)]
+    protected float panSpeed;
     [SerializeField]
-    [Range(1, 1000)]
-    private float panSpeed;
-    [SerializeField]
-    private int widthPanTolerance;
-    [SerializeField]
-    private int heightPanTolerance;
+    protected int panTolerance;
+
+    protected new Camera camera;
+    protected Vector3 center;
+
+    protected Vector3 desiredPosition;
 
     void Start() {
-      camera = gameObject.GetComponent<Camera>();
-      cameraCenter = camera.transform.position;
+        camera = Camera.main;
+        center = camera.transform.position;
+        desiredPosition = center;
     }
 
     void Update() {
-      updateZoom(Input.GetAxis("Mouse ScrollWheel"));
-      if(Input.GetKeyDown(KeyCode.Space)) {
-        center();
-      }
-      pan(getMouseAxis());
-    }
-
-    private void updateZoom(float scroll) {
-      float speed = 20 * zoomSpeed * zoomSpeed;
-      float newCameraSize = camera.orthographicSize -= scroll * Time.deltaTime * speed;
-      camera.orthographicSize = Mathf.Clamp(newCameraSize, minCameraSize, maxCameraSize);
-    }
-
-    private void center() {
-      camera.transform.position = cameraCenter;
-    }
-
-    private void pan(Vector2 mouse) {
-        Vector3 new_position = camera.transform.position +
-            mouse.x * Time.deltaTime * panSpeed * camera.transform.right +
-            Vector3.Cross(camera.transform.right, Vector3.up) * mouse.y * Time.deltaTime * panSpeed;
-      float rescalePanX = Mathf.Clamp(new_position.x, cameraCenter.x-maxPanXDistance, cameraCenter.x+maxPanXDistance);
-      float rescalePanZ = Mathf.Clamp(new_position.z, cameraCenter.z-maxPanZDistance, cameraCenter.z+maxPanZDistance);
-        camera.transform.position = new Vector3(rescalePanX, camera.transform.position.y, rescalePanZ);
+        if (Input.GetKeyDown(KeyCode.Space)) { centerCamera(); }
+        else {
+            float scrollwheel = Input.GetAxis("Mouse ScrollWheel");
+            desiredPosition += pan(getMouseAxis()) + zoom(scrollwheel);
+            clamp();
+        }
+        camera.transform.position = Vector3.Lerp(camera.transform.position, desiredPosition, 1-smoothing*0.99f);
     }
 
     private Vector2 getMouseAxis() {
-      Vector2 mouseAxis  = new Vector2(Input.GetAxis("Mouse X"),Input.GetAxis("Mouse Y")).normalized;
-      if (Input.mousePosition.x >= Screen.width - widthPanTolerance) {
-        mouseAxis.x = 1;
-      } else if(Input.mousePosition.x <= widthPanTolerance) {
-        mouseAxis.x = -1;
-      }
-      if (Input.mousePosition.y >= Screen.height - heightPanTolerance) {
-        mouseAxis.y = 1;
-      } else if(Input.mousePosition.y <= heightPanTolerance) {
-        mouseAxis.y = -1;
-      }
-      return mouseAxis;
+        Vector2 mouse;
+        mouse.x = Math.sign(Input.mousePosition.x - panTolerance) + Math.sign(Input.mousePosition.x - (Screen.width - panTolerance));
+        mouse.y = Math.sign(Input.mousePosition.y - panTolerance) + Math.sign(Input.mousePosition.y - (Screen.height - panTolerance));
+        return mouse;
     }
 
+    private Vector3 zoom(float scroll) {
+        return camera.transform.forward * scroll * Mathf.Pow(5, zoomSpeed) * worldScale * Time.deltaTime;
+    }
+    
+    private Vector3 pan(Vector2 mouse) {
+        return (mouse.x * camera.transform.right + Vector3.Cross(camera.transform.right, Vector3.up) * mouse.y) * panSpeed * worldScale * Time.deltaTime;
+    }
+
+    protected void clamp() {
+        desiredPosition = VectorMath.clamp(desiredPosition, new Vector3(-bounds.x, zoomBounds.x, -bounds.y), new Vector3(bounds.x, zoomBounds.y, bounds.y));
+    }
+
+    private void centerCamera() { desiredPosition = center; }
 }

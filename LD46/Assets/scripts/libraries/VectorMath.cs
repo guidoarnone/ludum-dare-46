@@ -59,4 +59,11 @@ public static class VectorMath {
         float y = (A1*C2-A2*C1)/determinant;
         return new Vector2(x, y);
     }
+
+    public static Vector3 clamp(Vector3 V, Vector3 min, Vector3 max) {
+        return new Vector3(
+            Math.clamp(V.x, min.x, max.x),
+            Math.clamp(V.y, min.y, max.y),
+            Math.clamp(V.z, min.z, max.z));
+    }
 }
