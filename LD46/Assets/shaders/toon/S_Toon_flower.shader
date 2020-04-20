@@ -52,8 +52,6 @@ Shader "Toon/flower" {
 			float _RimAmount;
 			float _RimThreshold;
 
-			uniform float _RushHour;
-
 			float4 rotate_around_y (float4 vertex, float degrees) {
 				float alpha = degrees;
 				float sin, cos;
@@ -81,8 +79,6 @@ Shader "Toon/flower" {
 				float seed = (world.x*1024 + world.z*1024) % 5769761;
 				vertex = rotate_around_y(vertex, _Time[2]+seed);
 				vertex = rotate_around_z(vertex, sin(_Time[1]+seed) / 10);
-				vertex.y += abs(sin(_RushHour*10))*0.25;
-				vertex.z += _RushHour * 1;
 				normal = rotate_around_y(float4(normal.xyz, 0), _Time[2]+seed);
 				normal = rotate_around_z(float4(normal.xyz, 0), sin(_Time[1]+seed) / 10);
 				v2f o;
@@ -167,16 +163,12 @@ Shader "Toon/flower" {
 				return mul(m, vertex);
 			}
 
-			uniform float _RushHour;
-
             v2f vert(appdata_base v) {
                 v2f o;
 				float3 world = unity_ObjectToWorld._m03_m13_m23;
 				float seed = (world.x*1024 + world.z*1024) % 5769761;
 				v.vertex = rotate_around_y(v.vertex, _Time[2]+seed);
 				v.vertex = rotate_around_z(v.vertex, sin(_Time[1]+seed) / 10);
-				v.vertex.y += abs(sin(_RushHour*10))*0.25;
-				v.vertex.z += _RushHour * 1;
 				v.normal = rotate_around_y(float4(v.normal.xyz, 0), _Time[2]+seed);
 				v.normal = rotate_around_z(float4(v.normal.xyz, 0), sin(_Time[1]+seed) / 10);
                 TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)

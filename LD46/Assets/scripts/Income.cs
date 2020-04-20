@@ -4,11 +4,16 @@ public delegate void ValueChange(int delta);
 
 public class Income {
 
-    public event ValueChange income = delegate { };
+    public event ValueChange valueChange = delegate { };
+    public event ValueChange intervalChange = delegate { };
+    public event ValueChange incrementChange = delegate { };
 
-    public int value;
+    public int value { get { return _value; } set { valueChange(value - _value); _value = value; } }
+    protected int _value;
     public float interval;
-    public int increment;
+    public int increment { get { return _increment; } set { incrementChange(value-_increment); _increment = value; } }
+    protected int _increment;
+
     private float nextUpdate;
 
     public Income() {
@@ -28,7 +33,6 @@ public class Income {
     public void update() {
         if (Time.time >= nextUpdate) {
             value += increment;
-            income(increment);
             nextUpdate = Time.time + interval;
         }
     }

@@ -8,42 +8,64 @@ public class CombatManager : MonoBehaviour {
 
     protected bool produce { set {
             if (value) {
-                GameManager.instance.incomeManager.playerTroops.income += playerArmy.add;
+                GameManager.instance.incomeManager.playerTroops.valueChange += playerArmy.add;
             }
             else {
-                GameManager.instance.incomeManager.playerTroops.income -= playerArmy.add;
+                GameManager.instance.incomeManager.playerTroops.valueChange -= playerArmy.add;
             }
         }
     }
+
+    [SerializeField]
+    protected int[] waves;
 
     [SerializeField]
     protected Path path;
 
     [SerializeField]
     public Army playerArmy;
+    [SerializeField]
+    protected ParticleSystem playerParticles;
 
     [SerializeField]
     public Army enemyArmy;
+    [SerializeField]
+    protected ParticleSystem enemyParticles;
 
     public AnimationCurve hitCurve;
 
     protected float startTime = -hitInterval*2;
 
+    int wave = 0;
     bool inCombat = false;
+    bool won = false;
 
     public void awake() {
+        wave = 0;
         playerArmy.awake(0);
-        enemyArmy.awake(1024);
+        enemyArmy.awake(waves[0]);
+        won = false;
         inCombat = false;
         produce = true;
     }
 
     public void reset() {
         StopAllCoroutines();
+        wave = 0;
         playerArmy.reset(0);
-        enemyArmy.reset(1024);
+        enemyArmy.reset(waves[0]);
+        won = false;
         inCombat = false;
         produce = true;
+    }
+
+    public void win() {
+        int enemiesLeft = enemyArmy;
+        enemyArmy.gameObject.SetActive(false);
+        enemyParticles.transform.position = enemyArmy.transform.position;
+        enemyParticles.emission.SetBursts(new ParticleSystem.Burst[] { new ParticleSystem.Burst(0.0f, (short)enemiesLeft, (short)enemiesLeft) });
+        enemyParticles.gameObject.SetActive(true);
+        won = true;
     }
 
     public void update() {
@@ -54,7 +76,7 @@ public class CombatManager : MonoBehaviour {
         }
         Shader.SetGlobalFloat("_RushHour", v);
         enemyArmy.update();
-        if (Army.distance(playerArmy, enemyArmy) <= 40 && !inCombat) { battle(); }
+        if (!won && Army.distance(playerArmy, enemyArmy) <= 40 && !inCombat) { battle(); }
     }
 
     public void battle() {
@@ -70,26 +92,30 @@ public class CombatManager : MonoBehaviour {
         int winArmy = 0;
         while (ongoing) {
             startTime = Time.time;
-            playerArmy.changeEmotion(Emotion.Attack);
             yield return new WaitForSeconds(hitInterval/2f);
+            Int2 values = new Int2(playerArmy.battleValue, enemyArmy.battleValue);
             winArmy = B.hit();
-            playerArmy.changeEmotion(Emotion.Hit);
+            values -= new Int2(playerArmy.battleValue, enemyArmy.battleValue);
+            playerParticles.emission.SetBursts(new ParticleSystem.Burst[] { new ParticleSystem.Burst(0.0f, (short)values.x, (short)values.x) });
+            enemyParticles.emission.SetBursts(new ParticleSystem.Burst[] { new ParticleSystem.Burst(0.0f, (short)values.y, (short)values.y) });
+            playerParticles.gameObject.SetActive(true);
+            enemyParticles.gameObject.SetActive(true);
             if (winArmy != 0) {
                 ongoing = false;
-                if (winArmy != -1) { enemyArmy.reset(Math.floor(Time.time * Time.time)); }
+                if (winArmy != -1) { wave++; enemyArmy.reset(waves[wave]); }
             }
             yield return new WaitForSeconds(hitInterval / 2f);
+            playerParticles.gameObject.SetActive(false);
+            enemyParticles.gameObject.SetActive(false);
         }
         if (winArmy == -1) { winner(enemyArmy); }
         else if (winArmy == 1) { winner(null); }
         else { winner(playerArmy); }
         yield return new WaitForSeconds(hitInterval / 2f);
-        playerArmy.changeEmotion(Emotion.Neutral);
     }
 
     protected void winner(Army A) {
         if (A != enemyArmy) {
-            playerArmy.changeEmotion(Emotion.Joy);
             inCombat = false;
             enemyArmy.inCombat = false;
             produce = true;

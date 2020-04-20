@@ -61,7 +61,7 @@ MeshRenderer:
   m_Materials:
   - {fileID: 2100000, guid: 01abd2abf863d2d43b4b1d6c396f8a2c, type: 2}
   - {fileID: 2100000, guid: 37a46c19b25772a4a967524ae577f476, type: 2}
-  - {fileID: 2100000, guid: cfaed022836fc004ebc18129bf219530, type: 2}
+  - {fileID: 2100000, guid: f8ebe6f8fbdd1e9419b8e411365fe8f8, type: 2}
   - {fileID: 2100000, guid: 3bb00a88b3e43e84b89579ba47e993b0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -95,12 +95,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e24dee646a10c4a42a4514f2d09374f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  battleValue: 540
-  weapon: {fileID: 0}
-  face: {fileID: 0}
-  emotions:
-  - {fileID: 2800000, guid: 19fd7587b66197f469b4fac7e5b0189c, type: 3}
-  - {fileID: 2800000, guid: 1ad8f583384a3f143a97fa7252bc6aed, type: 3}
-  - {fileID: 2800000, guid: b134f22d62b77294393f81eb61cbd862, type: 3}
-  - {fileID: 2800000, guid: ab5070c0131e37048afd300a65c7d166, type: 3}
-  - {fileID: 2800000, guid: e49d4482cc9b5fe498e6525545d59cbc, type: 3}
+  battleValue: 1600

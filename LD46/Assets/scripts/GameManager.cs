@@ -11,9 +11,9 @@ public class GameManager : MonoBehaviour {
     public static GameManager instance;
 
     public Flower flower;
-    public CombatManager combatManager;
-    public WeaponManager weaponManager;
     public IncomeManager incomeManager;
+    public CombatManager combatManager;
+    public UIManager UIManager;
 
     private void OnDrawGizmos() {
         Gizmos.color = Color.red;
@@ -24,27 +24,35 @@ public class GameManager : MonoBehaviour {
     void Awake() {
         singleton();
 
-        incomeManager = new IncomeManager();
+        incomeManager.awake();
         combatManager.awake();
+        UIManager.awake();
 
         update += combatManager.update;
         update += incomeManager.update;
+        update += UIManager.update;
     }
 
     public void reset() {
+        flower.reset();
         incomeManager.reset();
         combatManager.reset();
-        flower.reset();
+        UIManager.reset();
         Time.timeScale = 1;
     }
 
     void Update() {
         update();
-        //if (Input.GetKeyDown(KeyCode.R)) { reset(); }
+        if (Input.GetKeyDown(KeyCode.A)) { incomeManager.seedIncome.increment += 1; }
     }
 
     public void gameOver() {
         flower.gameOver();
+    }
+
+    public void win() {
+        combatManager.win();
+        flower.win();
     }
 
     void singleton() { instance = instance ?? this; }

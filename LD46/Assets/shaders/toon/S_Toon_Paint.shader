@@ -55,6 +55,7 @@ Shader "Toon/paintable" {
 
 			uniform float4 _ColorSource;
 			uniform float _ColorRadius;
+			uniform float _SmoothRadius;
 
 			v2f vert (float4 vertex : POSITION, float3 normal : NORMAL, float2 uv : TEXCOORD0) {
 				v2f o;
@@ -99,8 +100,11 @@ Shader "Toon/paintable" {
 				float4 light = lightIntensity * _LightColor0;
 				float4 specular = specularIntensitySmooth * _SpecularColor * lightIntensity * _LightColor0;
 				float4 rim = rimIntensity * _RimColor * _LightColor0;
+				float dist = distance(_ColorSource.xyz, i.worldpos);
+				dist = clamp(1 - (dist - _ColorRadius), 0, _SmoothRadius)/_SmoothRadius;
 
-				return  (distance(_ColorSource.xyz, i.worldpos) <= _ColorRadius ? color * _Color : float4(1, 1, 1, 1)) * (_AmbientColor + light + specular + rim);
+				color = dist * color * _Color + (1-dist) * (_Color.r + _Color.g + _Color.b) / 3;
+				return  color * (_AmbientColor + light + specular + rim);
 			}
 			ENDCG
 		}

@@ -74,7 +74,6 @@ public class Squad : MonoBehaviour {
             for (int y = 0; y < squadSize.y; y++) {
                 for (int z = 0; z < squadSize.z; z++) {
                     units[x, y, z] = Instantiate(unit, position(x, y, z), transform.rotation, transform);
-                    units[x, y, z].awake();
                     units[x, y, z].gameObject.SetActive(false);
                 }
             }
@@ -88,13 +87,6 @@ public class Squad : MonoBehaviour {
         clear();
         number = 0;
         battleValue = 0;
-    }
-
-    public void changeEmotion(Emotion emotion) {
-        for (int i = 0; i < capacity; i++) {
-            Vector3Int? coordinates = coordinate(i);
-            units[coordinates.Value.x, coordinates.Value.y, coordinates.Value.z].changeEmotion(emotion);
-        }
     }
 
     public Vector3 position(Vector3Int V) {
@@ -150,7 +142,10 @@ public class Squad : MonoBehaviour {
         Gizmos.color = Color.green;
         Int2 squadSizeGround = new Int2(squadSize.x, squadSize.z);
         Vector2 size = (squadSizeGround * (unitRadius + unitBuffer/2f));
-        Draw.Gizmo.grid(new Rectangle(transform.position, transform.up, transform.forward, size), squadSizeGround);
+        Matrix4x4 m = Gizmos.matrix;
+        Gizmos.matrix = transform.localToWorldMatrix;
+        Draw.Gizmo.grid(new Rectangle(Vector3.zero, Vector3.up, Vector3.forward, size), squadSizeGround);
+        Gizmos.matrix = m;
         int x = 0, y = 0, z = 0;
         for (x = 0; x < squadSize.x; x++) {
             for (z = 0; z < squadSize.z; z++) {

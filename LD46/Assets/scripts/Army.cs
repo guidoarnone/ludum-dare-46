@@ -69,13 +69,6 @@ public class Army : MonoBehaviour {
         squads[0].remove(n);
     }
 
-    public void changeEmotion(Emotion emotion) {
-        for (int i = 0; i < squads.Length; i++) {
-            Squad S = squads[i];
-            S.changeEmotion(emotion);
-        }
-    }
-
     void updateBattleValue(int delta) {
         battleValue += delta;
     }
