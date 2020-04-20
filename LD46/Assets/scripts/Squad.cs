@@ -7,7 +7,7 @@ public class Squad : MonoBehaviour {
     public event ValueChange change = delegate { };
 
     //TODO on 3D
-    public float front { get { Vector3Int? C = current; Debug.Log(position(current.Value).z); return C == null ? back : position(current.Value).z; } }
+    public float front { get { Vector3Int? C = current; return C == null ? back : position(current.Value).z; } }
 
     public float back { get { return position(0, 0, 0).z; } }
 
@@ -57,9 +57,6 @@ public class Squad : MonoBehaviour {
     protected Squad nextSquad;
 
     [SerializeField]
-    protected Army army;
-
-    [SerializeField]
     protected Vector3Int squadSize;
 
     [SerializeField]
@@ -77,6 +74,7 @@ public class Squad : MonoBehaviour {
             for (int y = 0; y < squadSize.y; y++) {
                 for (int z = 0; z < squadSize.z; z++) {
                     units[x, y, z] = Instantiate(unit, position(x, y, z), transform.rotation, transform);
+                    units[x, y, z].awake();
                     units[x, y, z].gameObject.SetActive(false);
                 }
             }
@@ -90,6 +88,13 @@ public class Squad : MonoBehaviour {
         clear();
         number = 0;
         battleValue = 0;
+    }
+
+    public void changeEmotion(Emotion emotion) {
+        for (int i = 0; i < capacity; i++) {
+            Vector3Int? coordinates = coordinate(i);
+            units[coordinates.Value.x, coordinates.Value.y, coordinates.Value.z].changeEmotion(emotion);
+        }
     }
 
     public Vector3 position(Vector3Int V) {

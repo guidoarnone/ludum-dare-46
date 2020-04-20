@@ -9,21 +9,18 @@ public class Unit : MonoBehaviour {
     public int battleValue;
 
     [SerializeField]
-    protected GameObject weapon;
-    [SerializeField]
-    protected GameObject face;
-
-    [SerializeField]
     public Texture2D[] emotions;
 
-    protected Material faceMat;
-    protected Material weaponMat;
+    protected Material face;
+    protected Material weapon;
 
-    private int tier { get { return battleValue / 25; } }
+    //TODO
+    private int tier { get { return 0; } }
 
-    void awake(Weapon weapon = Weapon.Melee) {
-        faceMat = face.GetComponent<MeshRenderer>().material;
-        weaponMat = this.weapon.GetComponent<MeshRenderer>().material;
+    public void awake(Weapon weapon = Weapon.Melee) {
+        MeshRenderer MR = GetComponent<MeshRenderer>();
+        if (MR.materials.Length >= 3) { face = MR.materials[2]; } else { face = MR.materials[1]; }
+        if (MR.materials.Length >= 3) { this.weapon = MR.materials[3]; }
         changeEmotion(Emotion.Neutral);
         changeWeapon(weapon);
     }
@@ -33,10 +30,12 @@ public class Unit : MonoBehaviour {
     }
 
     public void changeEmotion(Emotion emotion) {
-        faceMat.mainTexture = emotions[(int)emotion%emotions.Length];
+        if (!face) { return; }
+        face.mainTexture = emotions[(int)emotion%emotions.Length];
     }
 
     public void changeWeapon(Weapon weapon) {
-        weaponMat.mainTexture = GameManager.instance.weaponManager.getWeapon(tier, weapon);
+        if (!this.weapon) { return; }
+        this.weapon.mainTexture = GameManager.instance.weaponManager.getWeapon(tier, weapon);
     }
 }

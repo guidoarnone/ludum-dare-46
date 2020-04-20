@@ -94,7 +94,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e24dee646a10c4a42a4514f2d09374f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  battleValue: 30
+  battleValue: 540
   weapon: {fileID: 0}
   face: {fileID: 8786341824632643974}
   emotions:

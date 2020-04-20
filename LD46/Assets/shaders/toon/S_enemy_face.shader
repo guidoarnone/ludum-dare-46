@@ -35,7 +35,7 @@ Shader "Toon/enemy face" {
 
 			v2f vert (float4 vertex : POSITION, float2 uv : TEXCOORD0) {
 				float3 world = unity_ObjectToWorld._m03_m13_m23;
-				float seed = (world.x*1024 + world.z*1024) % 5769761;
+				float seed = (world.x*102400) % 5769761;
 				vertex.y += abs(sin(_Time[2]+seed))*0.1;
 				vertex.y += abs(sin(_RushHour*10))*0.25;
 				vertex.z += _RushHour * 1;

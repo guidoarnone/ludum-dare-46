@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour {
 
     public static GameManager instance;
 
+    public Flower flower;
     public CombatManager combatManager;
     public WeaponManager weaponManager;
     public IncomeManager incomeManager;
@@ -30,13 +31,20 @@ public class GameManager : MonoBehaviour {
         update += incomeManager.update;
     }
 
+    public void reset() {
+        incomeManager.reset();
+        combatManager.reset();
+        flower.reset();
+        Time.timeScale = 1;
+    }
+
     void Update() {
         update();
-        if (Input.GetKeyDown(KeyCode.Space)) { combatManager.battle(); }
+        //if (Input.GetKeyDown(KeyCode.R)) { reset(); }
     }
 
     public void gameOver() {
-
+        flower.gameOver();
     }
 
     void singleton() { instance = instance ?? this; }

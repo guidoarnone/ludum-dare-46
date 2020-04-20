@@ -173,7 +173,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e24dee646a10c4a42a4514f2d09374f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  battleValue: 540
+  battleValue: 30
   weapon: {fileID: 0}
   face: {fileID: 105272751910169188}
   emotions:

@@ -2,20 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public delegate void CombatEnd(Army A);
-
 public class CombatManager : MonoBehaviour {
 
     const float hitInterval = 3f;
 
     protected bool produce { set {
             if (value) {
-                GameManager.instance.incomeManager.battleIncome.income += playerArmy.add;
-                GameManager.instance.incomeManager.battleIncome.income += enemyArmy.add;
+                GameManager.instance.incomeManager.playerTroops.income += playerArmy.add;
             }
             else {
-                GameManager.instance.incomeManager.battleIncome.income -= playerArmy.add;
-                GameManager.instance.incomeManager.battleIncome.income -= enemyArmy.add;
+                GameManager.instance.incomeManager.playerTroops.income -= playerArmy.add;
             }
         }
     }
@@ -31,42 +27,71 @@ public class CombatManager : MonoBehaviour {
 
     public AnimationCurve hitCurve;
 
-    protected float startTime = -1;
+    protected float startTime = -hitInterval*2;
+
+    bool inCombat = false;
 
     public void awake() {
-        playerArmy.awake();
-        enemyArmy.awake();
+        playerArmy.awake(0);
+        enemyArmy.awake(1024);
+        inCombat = false;
+        produce = true;
+    }
+
+    public void reset() {
+        StopAllCoroutines();
+        playerArmy.reset(0);
+        enemyArmy.reset(1024);
+        inCombat = false;
         produce = true;
     }
 
     public void update() {
-        Debug.Log(Army.distance(playerArmy, enemyArmy));
         float v = 0;
         if ((startTime+hitInterval) >= Time.time) {
             float t = (Time.time - startTime) / hitInterval;
             v = hitCurve.Evaluate(t);
         }
         Shader.SetGlobalFloat("_RushHour", v);
+        enemyArmy.update();
+        if (Army.distance(playerArmy, enemyArmy) <= 40 && !inCombat) { battle(); }
     }
 
     public void battle() {
         produce = false;
-        Battle B = new Battle(playerArmy, enemyArmy, winner);
+        Battle B = new Battle(playerArmy, enemyArmy);
+        inCombat = true;
+        enemyArmy.inCombat = true;
         StartCoroutine("hit", B);
     }
 
     IEnumerator hit(Battle B) {
-        while (true) {
+        bool ongoing = true;
+        int winArmy = 0;
+        while (ongoing) {
             startTime = Time.time;
+            playerArmy.changeEmotion(Emotion.Attack);
             yield return new WaitForSeconds(hitInterval/2f);
-            if (B.hit()) { yield return new WaitForSeconds(hitInterval / 2f); break; }
-            yield return new WaitForSeconds(hitInterval/2f);
+            winArmy = B.hit();
+            playerArmy.changeEmotion(Emotion.Hit);
+            if (winArmy != 0) {
+                ongoing = false;
+                if (winArmy != -1) { enemyArmy.reset(Math.floor(Time.time * Time.time)); }
+            }
+            yield return new WaitForSeconds(hitInterval / 2f);
         }
+        if (winArmy == -1) { winner(enemyArmy); }
+        else if (winArmy == 1) { winner(null); }
+        else { winner(playerArmy); }
+        yield return new WaitForSeconds(hitInterval / 2f);
+        playerArmy.changeEmotion(Emotion.Neutral);
     }
 
     protected void winner(Army A) {
         if (A != enemyArmy) {
-            enemyArmy.reset();
+            playerArmy.changeEmotion(Emotion.Joy);
+            inCombat = false;
+            enemyArmy.inCombat = false;
             produce = true;
         }
         else { GameManager.instance.gameOver(); }

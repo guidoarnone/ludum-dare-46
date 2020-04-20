@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class Army : MonoBehaviour {
 
+    public bool inCombat = false;
+
     public bool empty { get { return battleValue == 0; } }
 
     public float front {
@@ -19,25 +21,44 @@ public class Army : MonoBehaviour {
     public int battleValue { get; protected set; }
 
     [SerializeField]
-    protected Text battleValueText;
+    protected Path path;
+
+    [SerializeField]
+    protected float speed;
 
     [SerializeField]
     protected Squad[] squads;
 
-    public void awake() {
+    protected float t;
+
+    public void awake(int n) {
         battleValue = 0;
         for (int i = 0; i < squads.Length; i++) { 
             Squad S = squads[i];
             S.awake();
             S.change += updateBattleValue;
         }
+        t = 0;
+        inCombat = false;
+        update();
+        add(n);
     }
 
-    public void reset() {
+    public void reset(int n) {
         for (int i = 0; i < squads.Length; i++) {
             Squad S = squads[i];
             S.reset();
         }
+        t = 0;
+        inCombat = false;
+        update();
+        add(n);
+    }
+
+    public void update() {
+        if (!path || inCombat) { return; }
+        t += speed/100 * Time.deltaTime;
+        transform.position = path.getPosition(t);
     }
 
     public void add(int n) {
@@ -48,9 +69,15 @@ public class Army : MonoBehaviour {
         squads[0].remove(n);
     }
 
+    public void changeEmotion(Emotion emotion) {
+        for (int i = 0; i < squads.Length; i++) {
+            Squad S = squads[i];
+            S.changeEmotion(emotion);
+        }
+    }
+
     void updateBattleValue(int delta) {
         battleValue += delta;
-        battleValueText.text = battleValue.ToString();
     }
 
     public static implicit operator int (Army A) {
