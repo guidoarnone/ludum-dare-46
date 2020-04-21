@@ -14,8 +14,12 @@ public class Army : MonoBehaviour {
                 Squad S = squads[i];
                 if (!S.empty) { return S.front; }
             }
-            return squads[0].back;
+            return back;
         }
+    }
+
+    public float back {
+        get { return squads[0].back; }
     }
 
     public int battleValue { get; protected set; }
@@ -39,6 +43,8 @@ public class Army : MonoBehaviour {
             S.change += updateBattleValue;
         }
         t = 0;
+        foreach (Squad S in squads) { t += S.empty ? 0.05f : 0f; }
+        Debug.Log(t);
         inCombat = false;
         update();
         add(n);
@@ -50,6 +56,8 @@ public class Army : MonoBehaviour {
             S.reset();
         }
         t = 0;
+        foreach (Squad S in squads) { t += S.empty ? 0.05f : 0f; }
+        Debug.Log(t);
         inCombat = false;
         update();
         add(n);

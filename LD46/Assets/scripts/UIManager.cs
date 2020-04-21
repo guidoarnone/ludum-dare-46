@@ -20,10 +20,10 @@ public class UIManager : MonoBehaviour {
 
     public void awake() {
         incomeManager = GameManager.instance.incomeManager;
-        seedIncrementCost = 10;
-        seedIntervalCost = 100;
+        seedIncrementCost = 5;
+        seedIntervalCost = 50;
         troopIncrementCost = 5;
-        troopIntervalCost = 100;
+        troopIntervalCost = 50;
     }
 
     public void reset() {
@@ -34,7 +34,7 @@ public class UIManager : MonoBehaviour {
     public void upgradeSeedIncrement() {
         if (pay(seedIncrementCost)) {
             incomeManager.seedIncome.increment++;
-            seedIncrementCost *= 2;
+            seedIncrementCost += Math.max(Math.round(Mathf.Log10(troopIncrementCost)) * 10, 10);
             update();
         }
     }
@@ -42,7 +42,7 @@ public class UIManager : MonoBehaviour {
     public void upgradeSeedInterval() {
         if (pay(seedIntervalCost)) {
             incomeManager.seedIncome.interval /= 2;
-            seedIntervalCost *= 10;
+            seedIntervalCost *= 4;
             update();
         }
     }
@@ -58,7 +58,7 @@ public class UIManager : MonoBehaviour {
     public void upgradeTroopInterval() {
         if (pay(troopIntervalCost)) {
             incomeManager.playerTroops.interval /= 2;
-            troopIntervalCost *= 10;
+            troopIntervalCost *= 4;
             update();
         }
     }

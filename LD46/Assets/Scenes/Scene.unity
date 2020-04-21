@@ -156,7 +156,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 50}
+  m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &53674106
 MonoBehaviour:
@@ -310,7 +310,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -200, y: 0}
+  m_AnchoredPosition: {x: -300, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &62931585
@@ -378,7 +378,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1bb265d4acdee0b48b2874af0f0f4920, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  A: {x: 0, y: 0, z: 100}
+  A: {x: 0, y: 0, z: 200}
   B: {x: 0, y: 0, z: -10}
 --- !u!4 &63749509
 Transform:
@@ -5645,7 +5645,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2179fa9c33efe8c478a5a7af0ef5a9e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waves: 0400000014000000280000005a00000096000000fa000000f4010000e8030000b80b00001027000030750000905f010020bf020080969800
+  waves: 050000000f0000001e000000320000005000000078000000c80000002c010000c2010000bc020000e8030000dc050000c4090000a00f00007017000028230000c8320000204e00003075000050c30000
   path: {fileID: 63749508}
   playerArmy: {fileID: 1949465032}
   playerParticles: {fileID: 487996408}
@@ -12395,7 +12395,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 50, y: 0}
-  m_SizeDelta: {x: 200, y: 50}
+  m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1425536722
 MonoBehaviour:
@@ -18109,7 +18109,7 @@ MonoBehaviour:
   unit: {fileID: 5387829332659432681, guid: a4208b1d96ac05b40a43142c20198ee4, type: 3}
   previousSquad: {fileID: 0}
   nextSquad: {fileID: 0}
-  squadSize: {x: 5, y: 1, z: 5}
+  squadSize: {x: 5, y: 5, z: 5}
   unitRadius: 1
   unitBuffer: 1
 --- !u!4 &290209756395985750
@@ -18220,7 +18220,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inCombat: 0
   path: {fileID: 63749508}
-  speed: 5
+  speed: 4
   squads:
   - {fileID: 2546799875708718231}
   - {fileID: 2546799876176635788}
@@ -18251,7 +18251,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2546799875687323450}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 0, z: 100}
+  m_LocalPosition: {x: 0, y: 0, z: 198.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2546799875708718224}

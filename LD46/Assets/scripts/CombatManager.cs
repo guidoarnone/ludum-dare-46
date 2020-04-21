@@ -102,7 +102,7 @@ public class CombatManager : MonoBehaviour {
             enemyParticles.gameObject.SetActive(true);
             if (winArmy != 0) {
                 ongoing = false;
-                if (winArmy != -1) { wave++; enemyArmy.reset(waves[wave]); }
+                if (winArmy != -1) { wave++; enemyArmy.reset(waves[wave]); Debug.Log(wave + " " + waves[wave]); }
             }
             yield return new WaitForSeconds(hitInterval / 2f);
             playerParticles.gameObject.SetActive(false);
